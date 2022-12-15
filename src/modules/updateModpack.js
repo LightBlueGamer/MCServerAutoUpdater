@@ -1,8 +1,14 @@
 const { exec } = require('child_process');
 const { readdirSync } = require('fs');
 
-async function updateModpack(url, serverFolder) {
-    exec(`cd "${serverFolder}"`, (err, stdout, stderr) => {
+async function updateModpack(url, serverFolder, serverId) {
+    exec(`cd "${serverFolder}" && curl "https://pan.litecraft.org/api/client/servers/${serverId}/power" \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer ${process.env.APIK}' \
+  -d '{
+  "signal": "stop"
+}' `, (err, stdout, stderr) => {
         if (err) {
             console.error(err)
         } else {
@@ -30,7 +36,13 @@ async function updateModpack(url, serverFolder) {
                                     for(const file of toRemove) {
                                         exec(`mv ${serverFolder}/${modpackFolder}/${file} ${serverFolder}`)
                                     };
-                                    exec(`rm -drf ${modpackFolder}`, (err, stdout, stderr) => {
+                                    exec(`rm -drf ${modpackFolder} && curl "https://pan.litecraft.org/api/client/servers/${serverId}/power" \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer ${process.env.APIK}' \
+  -d '{
+  "signal": "start"
+}' `, (err, stdout, stderr) => {
                                         if (err) {
                                             console.error(err)
                                         } else {

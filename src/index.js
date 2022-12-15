@@ -4,9 +4,11 @@ const { hasUpdated } = require('./modules/checkForUpdate');
 
 const modpacks = []
 
-(async ()=>{
-    for(const {folder, id} of modpacks) {
+async function run() {
+    for(const {folder, id, sId} of modpacks) {
         const url = await getURL(id);
-        if(await hasUpdated(id)) await updateModpack(url, folder);
+        if(await hasUpdated(id)) await updateModpack(url, folder, sId);
     }
-})();
+};
+
+run();
