@@ -21,3 +21,7 @@ async function getURL(modPackId) {
 
     return (await serverPack.json()).data.downloadUrl;
 };
+
+module.exports = {
+    getURL
+};
