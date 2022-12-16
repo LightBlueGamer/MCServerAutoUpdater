@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 const { readdirSync } = require('fs');
 const JSZip = require("jszip");
 const zip = new JSZip();
+const { readFile } = require('fs');
 
 async function updateModpack(url, serverFolder, serverId) {
     exec(`cd "${serverFolder}" && curl "https://pan.litecraft.org/api/client/servers/${serverId}/power" \
@@ -20,7 +21,16 @@ async function updateModpack(url, serverFolder, serverId) {
                 } else {
                     const urlArr = url.split("/");
                     const zipFile = urlArr[urlArr.length-1];
-                    exec(`unzip "${zipFile}"`, (err, stdout, stderr) => {
+                    let toDir = "";
+                    readFile(zipFile, (err, data) => {
+                        zip.loadAsync(data)
+                            .then((zip) => {
+                                const files = Object.keys(zip.files);
+                                const mapped = files.map(file => file.split('/')[0]);
+                                if([...new Set(mapped)].length > 1) toDir = `-d ${serverFolder}/${zipFile.replace('.zip', '')}`;
+                            })
+                    });
+                    exec(`unzip "${zipFile}" ${toDir}`, (err, stdout, stderr) => {
                         if (err) {
                             console.error(err)
                         } else {
