@@ -1,5 +1,7 @@
 const { exec } = require('child_process');
 const { readdirSync } = require('fs');
+const JSZip = require("jszip");
+const zip = new JSZip();
 
 async function updateModpack(url, serverFolder, serverId) {
     exec(`cd "${serverFolder}" && curl "https://pan.litecraft.org/api/client/servers/${serverId}/power" \

@@ -12,7 +12,8 @@ async function hasUpdated(modPackId) {
         method: `GET`,
         headers
     });
-    const serverPackId = (await res.json()).data[0].serverPackFileId;
+
+    const serverPackId = (await res.json()).data.find(d => d.serverPackFileId).serverPackFileId;
     
     const serverPack = await fetch(`https://api.curseforge.com/v1/mods/${modPackId}/files/`+serverPackId, {
         method: `GET`,
@@ -20,8 +21,9 @@ async function hasUpdated(modPackId) {
     });
 
     const lastUpdate = (await serverPack.json()).data.fileDate;
-
-    return new Date(lastUpdate).getTime() >= new Date(date.setDate(date.getDate()-1)).getTime();
+    const date = new Date();
+    
+    return new Date(lastUpdate).getTime() >= new Date(date.setDate(date.getDate()-100)).getTime();
 };
 
 module.exports = {

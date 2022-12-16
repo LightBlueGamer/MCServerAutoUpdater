@@ -12,7 +12,8 @@ async function getURL(modPackId) {
         method: `GET`,
         headers
     });
-    const serverPackId = (await res.json()).data[0].serverPackFileId;
+
+    const serverPackId = (await res.json()).data.find(d => d.serverPackFileId).serverPackFileId;
     
     const serverPack = await fetch(`https://api.curseforge.com/v1/mods/${modPackId}/files/`+serverPackId, {
         method: `GET`,
